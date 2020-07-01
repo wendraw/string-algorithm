@@ -1,0 +1,64 @@
+<script>
+  class Trie {
+    constructor() {
+      this.root = {};
+      this.endOfWord = "$"; // 与正则的结束符号保持一致
+    }
+
+    insert(word) {
+      let node = this.root;
+      for (let char of word) {
+        node[char] = node[char] || {};
+        node = node[char];
+      }
+      node[this.endOfWord] = node[this.endOfWord] + 1 || 1;
+    }
+
+    search(word) {
+      let node = this.root;
+      for (let char of word) {
+        if (!node[char]) return false;
+        node = node[char];
+      }
+      return !!node[this.endOfWord]
+    }
+
+    startWith(prefix) {
+      this.node = this.root;
+      for (let char of prefix) {
+        if (!node[char]) return false;
+        node = node[char];
+      }
+      return true;
+    }
+
+    most() {
+      let max = 0;
+      let maxWord = null;
+      let visit = (node, word) => {
+        if (node[this.endOfWord] && node[this.endOfWord] > max) {
+          max = node[this.endOfWord];
+          maxWord = word;
+        }
+        for (let p in node) {
+          visit(node[p], word + p);
+        }
+      }
+      visit(this.root, "");
+      console.log(maxWord, max);
+    }
+  }
+
+  function randomWord(length) {
+    let s = "";
+    for (let i = 0; i < length; i++) {
+      s += String.fromCharCode(Math.random() * 26 + "a".charCodeAt(0));
+    }
+    return s;
+  }
+
+  let trie = new Trie();
+  for (let i = 0; i < 1000000; i++) {
+    trie.insert(randomWord(4));
+  }
+</script>
