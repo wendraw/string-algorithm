@@ -3,14 +3,17 @@
     // ? 表示任意单个字符
 
     function find(source, pattern) {
+        // 统计 * 的数量
         let starCount = 0;
         for (let i = 0; i < pattern.length; i++) {
             if (pattern[i] === "*") {
                 starCount++;
             }
         }
+
         // 处理没有 * 的情况
         if (starCount === 0) {
+            if (source.length !== pattern.length) return false;
             for (let i = 0; i < pattern.length; i++) {
                 if (pattern[i] !== source[i] && pattern[i] !== "?") {
                     return false;
@@ -28,7 +31,7 @@
             i++;
         }
 
-        // 处理中间部分的内容，按 *  切分，将 ? 转化成正则。
+        // 处理中间部分的内容，按 * 切分，将 ? 转化成正则。
         let lastIndex = i;
         for (let p = 0; p < starCount - 1; p++) {
             i++;
@@ -40,7 +43,8 @@
             let reg = new RegExp(subPattern.replace(/\?/g, "[\\s\\S]"), "g");
             reg.lastIndex = lastIndex;
 
-            console.log(reg.exec(source));
+            if (!reg.exec(source)) return false;
+            
             lastIndex = reg.lastIndex;
         }
 

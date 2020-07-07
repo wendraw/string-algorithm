@@ -45,7 +45,32 @@
         }
       }
       visit(this.root, "");
-      console.log(maxWord, max);
+      return { maxWord, max };
+    }
+
+    top50() {
+      let top50 = [];
+      let visit = (node, word) => {
+        if (node[this.endOfWord]) {
+          if (top50.length < 50) {
+            top50.push({ word: word, count: node[this.endOfWord] });
+            if (top50.length === 50) {
+              top50.sort((a, b) => b.count - a.count);
+            }
+          } else {
+            if (node[this.endOfWord] > top50[top50.length - 1].count) {
+              top50.pop();
+              top50.push({ word: word, count: node[this.endOfWord] });
+              top50.sort((a, b) => b.count - a.count);
+            }
+          }
+        }
+        for (let p in node) {
+          visit(node[p], word + p);
+        }
+      }
+      visit(this.root, "");
+      return top50;
     }
   }
 

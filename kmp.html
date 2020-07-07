@@ -1,7 +1,7 @@
 <script>
     // O(m * n)
-    function find1(source, pattern) {
-        for (let i = 0; i < source.length; i++) {
+    function bf(source, pattern) {
+        for (let i = 0; i < source.length - pattern.length; i++) {
             let match = true;
             for (let j = 0; j < pattern.length; j++) {
                 if (source[i + j] !== pattern[j]) {
@@ -14,8 +14,8 @@
         return false;
     }
 
-    // bad case：find2("abcxxyz", "xy")
-    function find2(source, pattern) {
+    // bad case：match("abcxxyz", "xy")
+    function match(source, pattern) {
         let j = 0;
         for (let i = 0; i < source.length; i++) {
             if (source[i] === pattern[j]) {
@@ -29,8 +29,8 @@
         return false;
     }
 
-    // bad case: find3("abcabcabx", "abcabx")
-    function find3(source, pattern) {
+    // bad case: match2("abcxxxyz", "xxy")
+    function match2(source, pattern) {
         let j = 0;
         for (let i = 0; i < source.length; i++) {
             console.log(source[i], pattern[j])
@@ -48,32 +48,36 @@
         return false;
     }
 
-    function find4(source, pattern) {
-        let table = new Array(pattern.length).fill(0);
-        let k = 0;
-        for (let j = 1; j < pattern.length; j++) {
-            if (pattern[j] === pattern[k]) {
-                k++;
-            } else {
-                k = 0;
-            }
-            table[j] = k;
-        }
+    function kmp(source, pattern) {
+        if (source.length < pattern.length) return false;
 
+        // 构建 next
+        let next = getNext(pattern);
         let j = 0;
         for (let i = 0; i < source.length; i++) {
-            console.log(source[i], pattern[j])
-            if (source[i] === pattern[j]) {
-                j++;
-            } else {
-                j = table[j - 1];
-                if (source[i] === pattern[j]) {
-                    j++;
-                }
+            while (j > 0 && source[i] !== pattern[j]) {
+                //遇到坏字符时，查询next数组并改变模式串的起点
+                j = next[j];
             }
-
+            if (source[i] === pattern[j]) j++;
+            // 找到匹配模式串的了
             if (j === pattern.length) return true;
         }
         return false;
+
+        function getNext(pattern) {
+            let next = new Array(pattern.length).fill(0);
+            let j = 0; // 最长可匹配前缀子串的下一个位置
+            // i 是已匹配前缀的下一个位置
+            for (let i = 1; i < pattern.length; i++) {
+                while (j !== 0 && pattern[j] !== pattern[i - 1]) {
+                    // 从 next[i - 1] 求解回溯到 next[j]
+                    j = next[j];
+                }
+                if (j !== i - 1 && pattern[j] === pattern[i - 1]) j++;
+                next[i] = j;
+            }
+            return next;
+        }
     }
 </script>
